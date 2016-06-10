@@ -9,12 +9,10 @@ import com.logicaalternativa.futures.imp.AwaitAlternativeFuture;
 import com.logicaalternativa.futures.util.activeobject.imp.BuilderActiveObject;
 import com.logicaalternativa.poc.functional.app.command.CommandCreate;
 import com.logicaalternativa.poc.functional.app.dto.RentalDto;
-import com.logicaalternativa.poc.functional.app.handler.ILanguageHandler;
 import com.logicaalternativa.poc.functional.app.handler.ILanguageHandlerFuture;
-import com.logicaalternativa.poc.functional.app.handler.IRentalHandlerAsync;
 import com.logicaalternativa.poc.functional.app.handler.IRentalHandlerFunctional;
 import com.logicaalternativa.poc.functional.app.handler.imp.LanguageHandlerFuture;
-import com.logicaalternativa.poc.functional.app.handler.imp.RentalHandlerFunctionalJ8;
+import com.logicaalternativa.poc.functional.app.handler.imp.RentalHandlerFunctional;
 import com.logicaalternativa.poc.functional.domain.IRentalRepositoryAsync;
 import com.logicaalternativa.poc.functional.infrastructure.ILanguageRentalRepositoryAsyn;
 import com.logicaalternativa.poc.functional.infrastructure.IRestClientAsync;
@@ -37,24 +35,26 @@ public class MainFunctionalAsync {
 						.build();
 		}
 	
+	@SuppressWarnings("unchecked")
+	private static IRentalHandlerFunctional<Monad<RentalDto>> configure() {
+		final IRestClientAsync restClientAsync = createActiveObject( new RestClientAsync() , IRestClientAsync.class);
+		
+		final ILanguageRentalRepositoryAsyn languageRepo =  createActiveObject(new LanguageRentalRepositoryAsyn( restClientAsync  ), ILanguageRentalRepositoryAsyn.class );
+		final IRentalRepositoryAsync repositoryAsync = createActiveObject(new RentalRepositoryFuntional<>( languageRepo ), IRentalRepositoryAsync.class );
+		
+		final ILanguageHandlerFuture language = createActiveObject( new LanguageHandlerFuture( repositoryAsync ), ILanguageHandlerFuture.class);
+//		IRentalHandlerFunctional<Monad<RentalDto>> implHandler = new RentalHandlerFunctionalJ8<>( language );
+		IRentalHandlerFunctional<Monad<RentalDto>> implHandler = new RentalHandlerFunctional<>( language );
+		
+		final IRentalHandlerFunctional<Monad<RentalDto>> handler = createActiveObject( implHandler, IRentalHandlerFunctional.class);
+		return handler;
+	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static void main(String[] args) throws Exception {
 		
 		/* CONFIG */
 		
-		final IRestClientAsync restClientAsync = createActiveObject( new RestClientAsync() , IRestClientAsync.class);
-		
-		final ILanguageRentalRepositoryAsyn languageRepo =  createActiveObject(new LanguageRentalRepositoryAsyn( restClientAsync  ), ILanguageRentalRepositoryAsyn.class );
-		
-		final IRentalRepositoryAsync repositoryAsync = createActiveObject(new RentalRepositoryFuntional<>( languageRepo ), IRentalRepositoryAsync.class );
-		
-		final ILanguageHandler language = (ILanguageHandler) createActiveObject( new LanguageHandlerFuture( repositoryAsync ), ILanguageHandlerFuture.class);
-		
-		IRentalHandlerFunctional<Monad<RentalDto>> implHandler = new RentalHandlerFunctionalJ8( language );
-//		IRentalHandlerFunctional<Monad<RentalDto>> implHandler = new RentalHandlerFunctional( language );
-		
-		final IRentalHandlerFunctional<Monad<RentalDto>> handler = createActiveObject( implHandler, IRentalHandlerFunctional.class);
+		final IRentalHandlerFunctional<Monad<RentalDto>> handler = configure();
 		
 		/* CALL */
 		
@@ -73,5 +73,7 @@ public class MainFunctionalAsync {
 		
 
 	}
+
+
 
 }

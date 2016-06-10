@@ -3,6 +3,7 @@ package com.logicaalternativa.poc.functional.app.handler.imp;
 import static com.logicaalternativa.forcomprehensions.util.UtilFor.args;
 import static com.logicaalternativa.forcomprehensions.util.UtilFor.gBol;
 import static com.logicaalternativa.forcomprehensions.util.UtilFor.var;
+import static com.logicaalternativa.forcomprehensions.util.UtilFor.toCast;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,14 +17,13 @@ import com.logicaalternativa.poc.functional.app.handler.ILanguageHandler;
 import com.logicaalternativa.poc.functional.app.handler.IRentalHandlerFunctional;
 import com.logicaalternativa.poc.functional.domain.IRentalAggregate;
 
-public class RentalHandlerFunctionalJ8 implements IRentalHandlerFunctional<Monad<RentalDto>> {
+public class RentalHandlerFunctionalJ8 <S extends Monad<IRentalAggregate>, U extends Monad<Boolean>> implements IRentalHandlerFunctional<Monad<RentalDto>> {
 	
 	private static Logger logger = LoggerFactory.getLogger( RentalHandlerFunctionalJ8.class.getSimpleName()  );
 	
-	@SuppressWarnings("rawtypes")
-	private ILanguageHandler lang;
+	private ILanguageHandler<S,U> lang;
 
-	public RentalHandlerFunctionalJ8(final ILanguageHandler language) {
+	public RentalHandlerFunctionalJ8(final ILanguageHandler<S,U> language) {
 		super();
 		this.lang = language;
 	}
@@ -37,7 +37,6 @@ public class RentalHandlerFunctionalJ8 implements IRentalHandlerFunctional<Monad
 		
 		final RentalDto rentalDto = new RentalDto(null, comm.getIdFlim(), comm.getIdCustomer());
 		
-		@SuppressWarnings("unchecked")
 		final Monad<RentalDto> rentalDtoMonad = interpreter
 			.line(
 					var("aggregate"),
@@ -65,13 +64,13 @@ public class RentalHandlerFunctionalJ8 implements IRentalHandlerFunctional<Monad
 	
 	private IRentalAggregate gAgr( Object object ) {
 		
-		return ( IRentalAggregate ) object;
+		return toCast(object, IRentalAggregate.class ) ;
 		
 	}
 	
 	private RentalDto gDto( Object object ) {
 		
-		return ( RentalDto ) object;
+		return toCast(object, RentalDto.class );
 		
 	}
 

@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import com.logicaalternativa.forcomprehensions.IFor;
 import com.logicaalternativa.forcomprehensions.build.BuilderFor;
 import com.logicaalternativa.forcomprehensions.build.BuilderFor.Type;
-import com.logicaalternativa.futures.AlternativeFuture;
 import com.logicaalternativa.futures.Monad;
 import com.logicaalternativa.poc.functional.app.command.CommandCreate;
 import com.logicaalternativa.poc.functional.app.dto.RentalDto;
@@ -20,14 +19,13 @@ import com.logicaalternativa.poc.functional.app.handler.ILanguageHandler;
 import com.logicaalternativa.poc.functional.app.handler.IRentalHandlerFunctional;
 import com.logicaalternativa.poc.functional.domain.IRentalAggregate;
 
-public class RentalHandlerFunctional implements IRentalHandlerFunctional <Monad<RentalDto>>{
+public class RentalHandlerFunctional<S extends Monad<IRentalAggregate>, T extends Monad<Boolean> > implements IRentalHandlerFunctional <Monad<RentalDto>>{
 	
 	private static Logger logger = LoggerFactory.getLogger( RentalHandlerFunctional.class.getSimpleName()  );
 	
-	@SuppressWarnings("rawtypes")
-	private ILanguageHandler language;
+	private ILanguageHandler<S,T> language;
 
-	public RentalHandlerFunctional(final ILanguageHandler language) {
+	public RentalHandlerFunctional(final ILanguageHandler<S,T> language) {
 		super();
 		this.language = language;
 	}

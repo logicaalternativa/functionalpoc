@@ -30,14 +30,19 @@ public class MainAsycn {
 						.build();
 		}
 	
-
-	public static void main(String[] args) throws Exception {
-		
+	private static IRentalHandlerAsync configure() {
 		final IRestClientAsync restClientAsync = createActiveObject( new RestClientAsync() , IRestClientAsync.class);
 		
 		final IRentalRepositoryAsync repositoryAsync = createActiveObject(new RentalRepositoryAsync( restClientAsync ), IRentalRepositoryAsync.class ); 
 		
 		final IRentalHandlerAsync handler = createActiveObject(new RentalHandlerAsync( repositoryAsync ), IRentalHandlerAsync.class);
+		return handler;
+	}
+	
+
+	public static void main(String[] args) throws Exception {
+		
+		final IRentalHandlerAsync handler = configure();
 		
 		// ---------------------------------------
 		// ---------------------------------------
@@ -59,5 +64,8 @@ public class MainAsycn {
 		
 
 	}
+
+
+	
 
 }

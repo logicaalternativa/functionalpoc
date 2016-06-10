@@ -26,12 +26,17 @@ public class MainSycn {
 						.build();
 		}
 	
-
-	public static void main(String[] args) {
+	private static IRentalHandlerSync configure() {
 		
 		final IRentalRepositorySync repositorySync = createActiveObject(new RentalRepositorySync(), IRentalRepositorySync.class ); 
 		
-		final IRentalHandlerSync handler = createActiveObject(new RentalHandlerSync( repositorySync ), IRentalHandlerSync.class);
+		final IRentalHandlerSync handler = createActiveObject( new RentalHandlerSync( repositorySync ), IRentalHandlerSync.class );
+		return handler;
+	}
+
+	public static void main(String[] args) {
+		
+		final IRentalHandlerSync handler = configure();
 		
 		final String idFlim = "idFlim";		
 		final String idCustomer = "idCustomer";
@@ -42,8 +47,7 @@ public class MainSycn {
 		
 		logger.info(" RENTAL DTO " + rentalDto) ;
 		
-		System.exit(0);		
-		
+		System.exit(0);
 
 	}
 

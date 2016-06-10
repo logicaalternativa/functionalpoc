@@ -28,15 +28,26 @@ public class MainFunctionalSync {
 						.withImplementation( implementation )
 						.build();
 		}
-	
 
-	public static void main(String[] args) throws Exception {
-	
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private static IRentalHandlerFunctional configure() {
+		
 		final IRentalRepositorySync repositorySync = createActiveObject(new RentalRepositorySync(), IRentalRepositorySync.class );
 		
 		final ILanguageHandlerOption language =  createActiveObject( new LanguageHandlerOption( repositorySync ), ILanguageHandlerOption.class );
 		
 		final IRentalHandlerFunctional handler =  createActiveObject( new RentalHandlerFunctional( language ), IRentalHandlerFunctional.class );
+		
+		return handler;
+		
+	}
+	
+
+	@SuppressWarnings("rawtypes")
+	public static void main(String[] args) throws Exception {
+	
+		final IRentalHandlerFunctional handler = configure();
 		
 		////////
 		////////

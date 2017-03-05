@@ -3,12 +3,12 @@ package com.logicaalternativa.poc.functional.infrastructure.imp;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.logicaalternativa.futures.AlternativeFuture;
-import com.logicaalternativa.futures.FunctionMapper;
 import com.logicaalternativa.futures.pojo.AlternativeTuple;
 import com.logicaalternativa.futures.util.activeobject.imp.BuilderActiveObject;
 import com.logicaalternativa.poc.functional.app.dto.CustomerInfoDto;
@@ -66,10 +66,10 @@ public class RentalRepositoryAsync implements IRentalRepositoryAsync{
 		
 		final AlternativeFuture<CustomerInfoDto> customerInfoFuture = customerFuture
 				.flatMap(
-						new FunctionMapper<CustomerDto, AlternativeFuture<CustomerInfoDto>>() {
+						new Function<CustomerDto, AlternativeFuture<CustomerInfoDto>>() {
 
 							@Override
-							public AlternativeFuture<CustomerInfoDto> map(CustomerDto arg0) {
+							public AlternativeFuture<CustomerInfoDto> apply(CustomerDto arg0) {
 								
 								if ( arg0.getIsVip() ) {
 									
@@ -93,10 +93,10 @@ public class RentalRepositoryAsync implements IRentalRepositoryAsync{
 		
 		return zipFuture.map( 
 				
-				new FunctionMapper<AlternativeTuple<AlternativeTuple<CustomerDto,FilmDto>,CustomerInfoDto>, IRentalAggregate>() {
+				new Function<AlternativeTuple<AlternativeTuple<CustomerDto,FilmDto>,CustomerInfoDto>, IRentalAggregate>() {
 
 					@Override
-					public IRentalAggregate map(
+					public IRentalAggregate apply(
 							AlternativeTuple<AlternativeTuple<CustomerDto, FilmDto>, CustomerInfoDto> tuple) {
 						
 						final FilmDto filmDto = tuple.getA().getB();

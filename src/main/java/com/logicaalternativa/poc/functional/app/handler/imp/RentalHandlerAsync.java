@@ -2,12 +2,12 @@ package com.logicaalternativa.poc.functional.app.handler.imp;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.function.Function;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.logicaalternativa.futures.AlternativeFuture;
-import com.logicaalternativa.futures.FunctionMapper;
 import com.logicaalternativa.poc.functional.app.command.CommandCreate;
 import com.logicaalternativa.poc.functional.app.dto.RentalDto;
 import com.logicaalternativa.poc.functional.app.handler.IRentalHandlerAsync;
@@ -39,10 +39,10 @@ public class RentalHandlerAsync implements IRentalHandlerAsync {
 		final ExecutorService executor = Executors.newCachedThreadPool();
 		
 		return aggregateFuture
-			.flatMap( new FunctionMapper<IRentalAggregate, AlternativeFuture<IRentalAggregate>>() {
+			.flatMap( new Function<IRentalAggregate, AlternativeFuture<IRentalAggregate>>() {
 
 						@Override
-						public AlternativeFuture<IRentalAggregate> map(IRentalAggregate aggregate) {
+						public AlternativeFuture<IRentalAggregate> apply(IRentalAggregate aggregate) {
 							
 							if ( aggregate.validateBeforeSave() ) {
 								
@@ -53,10 +53,10 @@ public class RentalHandlerAsync implements IRentalHandlerAsync {
 							throw new RuntimeException( "validate entity is not OK" );
 						}
 					}, executor )
-			.map( new FunctionMapper<IRentalAggregate, RentalDto>() {
+			.map( new Function<IRentalAggregate, RentalDto>() {
 
 				@Override
-				public RentalDto map(IRentalAggregate aggregate) {
+				public RentalDto apply(IRentalAggregate aggregate) {
 					 
 					return new RentalDto( aggregate.getId(), 
 								aggregate.getIdFilm(), 
